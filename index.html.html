@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Catatan Keuangan</title>
+<style>
+:root{--bg:#f3f4f6;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--in:#16a34a;--out:#dc2626;--as:#2563eb;--pri:#2563eb;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f172a;--card:#1e293b;--text:#f1f5f9;--muted:#94a3b8;--line:#334155;--in:#4ade80;--out:#f87171;--as:#60a5fa;--pri:#3b82f6}}
+:root[data-theme="dark"]{--bg:#0f172a;--card:#1e293b;--text:#f1f5f9;--muted:#94a3b8;--line:#334155;--in:#4ade80;--out:#f87171;--as:#60a5fa;--pri:#3b82f6}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:4px 0 2px}.sub{color:var(--muted);font-size:13px;margin-bottom:12px}
+.tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto}
+.tabs button{flex:1;white-space:nowrap}
+button,input,select{font:inherit;color:var(--text)}
+button{border:1px solid var(--line);background:var(--card);padding:9px 12px;border-radius:10px;cursor:pointer}
+button.on,button.pri{background:var(--pri);color:#fff;border-color:var(--pri)}
+input,select{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px;min-width:0}
+.card{background:var(--card);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.k{color:var(--muted);font-size:12px}.v{font-size:19px;font-weight:600;margin-top:2px}
+.in{color:var(--in)}.out{color:var(--out)}.as{color:var(--as)}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:8px}.form .full{grid-column:1/-1}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border:0}.row small{color:var(--muted);display:block}
+.del{padding:4px 9px;color:var(--muted)}
+.bar{height:8px;border-radius:4px;background:var(--line);margin-top:4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--out)}
+.bar.a i{background:var(--as)}
+.mo{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.empty{color:var(--muted);text-align:center;padding:16px 0;font-size:14px}
+#st{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>💰 Catatan Keuangan</h1>
+  <div class="sub">Rekap aset, pemasukan, dan pengeluaran</div>
+  <div class="tabs" id="tabs"></div>
+  <div id="app"></div>
+  <div id="st"></div>
+</div>
+<script>
+var CATS={in:["Gaji","Usaha","Bonus","Lainnya"],out:["Makan","Transport","Tagihan","Belanja","Kesehatan","Pendidikan","Lainnya"],as:["Kas/Bank","Emas","Investasi","Kendaraan","Properti","Lainnya"]};
+var TITLE={sum:"Ringkasan",in:"Pemasukan",out:"Pengeluaran",as:"Aset"};
+var S={items:[]},tab="sum",ref=null,month=new Date().toISOString().slice(0,7);
+var $=function(s){return document.querySelector(s)};
+var rp=function(n){return "Rp "+Math.round(n).toLocaleString("id-ID")};
+var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+function status(t){$("#st").textContent=t}
+function lsGet(){try{var d=localStorage.getItem("keuangan");if(d)S.items=JSON.parse(d)}catch(e){}}
+function save(){
+  if(ref){ref.set({items:S.items}).then(function(){status("Tersimpan di akun Anda (privat)")}).catch(function(){status("Gagal menyimpan ke akun")});return}
+  try{localStorage.setItem("keuangan",JSON.stringify(S.items));status("Tersimpan di browser ini")}catch(e){status("Tidak dapat menyimpan data")}
+}
+function sum(t,m){return S.items.filter(function(i){return i.type===t&&(!m||i.date.slice(0,7)===m)}).reduce(function(a,i){return a+i.amount},0)}
+function byCat(t,m){var o={};S.items.forEach(function(i){if(i.type===t&&(!m||i.date.slice(0,7)===m))o[i.cat]=(o[i.cat]||0)+i.amount});return Object.keys(o).map(function(k){return[k,o[k]]}).sort(function(a,b){return b[1]-a[1]})}
+function bars(list,cls){var tot=list.reduce(function(a,x){return a+x[1]},0);if(!tot)return '<div class="empty">Belum ada data</div>';
+  return list.map(function(x){return '<div style="margin:8px 0"><div class="row" style="border:0;padding:0"><span>'+esc(x[0])+'</span><b>'+rp(x[1])+'</b></div><div class="bar '+cls+'"><i style="width:'+(x[1]/tot*100)+'%"></i></div></div>'}).join("")}
+function monthBox(){return '<div class="mo"><span class="k">Bulan:</span><input type="month" id="mo" value="'+month+'"></div>'}
+function render(){
+  $("#tabs").innerHTML=Object.keys(TITLE).map(function(k){return '<button data-tab="'+k+'" class="'+(k===tab?"on":"")+'">'+TITLE[k]+'</button>'}).join("");
+  var h="";
+  if(tab==="sum"){
+    var i=sum("in",month),o=sum("out",month);
+    h=monthBox()+'<div class="grid"><div class="card"><div class="k">Total Aset</div><div class="v as">'+rp(sum("as"))+'</div></div>'+
+    '<div class="card"><div class="k">Saldo bulan ini</div><div class="v '+(i-o>=0?"in":"out")+'">'+rp(i-o)+'</div></div>'+
+    '<div class="card"><div class="k">Pemasukan</div><div class="v in">'+rp(i)+'</div></div>'+
+    '<div class="card"><div class="k">Pengeluaran</div><div class="v out">'+rp(o)+'</div></div></div>'+
+    '<div class="card"><b>Pengeluaran per kategori</b>'+bars(byCat("out",month),"")+'</div>'+
+    '<div class="card"><b>Aset per kategori</b>'+bars(byCat("as"),"a")+'</div>';
+  }else{
+    var isA=tab==="as",list=S.items.filter(function(x){return x.type===tab&&(isA||x.date.slice(0,7)===month)}).sort(function(a,b){return b.date.localeCompare(a.date)});
+    var cls=tab==="in"?"in":tab==="out"?"out":"as";
+    h=(isA?"":monthBox())+'<div class="card"><div class="form">'+
+    (isA?'':'<input type="date" id="f-date" value="'+new Date().toISOString().slice(0,10)+'">')+
+    '<select id="f-cat" '+(isA?'':'')+'>'+CATS[tab].map(function(c){return '<option>'+c+'</option>'}).join("")+'</select>'+
+    '<input type="number" id="f-amt" inputmode="decimal" min="0" placeholder="'+(isA?"Nilai (Rp)":"Jumlah (Rp)")+'">'+
+    '<input type="text" id="f-note" placeholder="'+(isA?"Nama aset":"Catatan")+'">'+
+    '<button class="pri full" data-add="1">Tambah</button></div></div>'+
+    '<div class="card"><div class="row" style="padding-top:0"><b>Total</b><b class="'+cls+'">'+rp(list.reduce(function(a,x){return a+x.amount},0))+'</b></div>'+
+    (list.length?list.map(function(x){return '<div class="row"><div>'+esc(x.note||x.cat)+'<small>'+esc(x.cat)+(isA?"":" · "+x.date)+'</small></div><div><b class="'+cls+'">'+rp(x.amount)+'</b> <button class="del" data-del="'+x.id+'">✕</button></div></div>'}).join(""):'<div class="empty">Belum ada data</div>')+'</div>';
+  }
+  $("#app").innerHTML=h;
+}
+document.addEventListener("click",function(e){
+  var b=e.target.closest("button");if(!b)return;
+  if(b.dataset.tab){tab=b.dataset.tab;render()}
+  else if(b.dataset.del){S.items=S.items.filter(function(x){return x.id!==b.dataset.del});save();render()}
+  else if(b.dataset.add){
+    var amt=parseFloat($("#f-amt").value);if(!(amt>0)){$("#f-amt").focus();return}
+    var d=$("#f-date");
+    S.items.push({id:String(Date.now())+Math.random().toString(36).slice(2,6),type:tab,date:d?d.value||new Date().toISOString().slice(0,10):new Date().toISOString().slice(0,10),amount:amt,cat:$("#f-cat").value,note:$("#f-note").value.trim()});
+    save();render()}
+});
+document.addEventListener("change",function(e){if(e.target.id==="mo"&&e.target.value){month=e.target.value;render()}});
+render();
+(async function(){
+  try{
+    if(window.claude&&claude.use){
+      var db=await claude.use("db"),user=await claude.use("user");
+      if(db&&user){
+        var id=await user.id();
+        ref=db.collection("data/users/"+id).doc("finance");
+        var snap=await ref.get();
+        if(snap.exists){S.items=(snap.data().items)||[]}
+        else{lsGet();if(S.items.length)save()}
+        status("Data privat di akun Anda");render();return;
+      }
+    }
+  }catch(e){ref=null}
+  lsGet();status("Data disimpan di browser ini");render();
+})();
+</script>
+</body>
+</html>

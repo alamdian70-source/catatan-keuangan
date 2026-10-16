@@ -43,7 +43,7 @@ h1,h2,h3,p{margin:0}
 .mo input{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:14px}
 #st{font-size:12px;color:var(--muted);text-align:center;margin-top:28px}
 
-.bnav{position:fixed;left:0;right:0;bottom:0;z-index:10;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding-bottom:env(safe-area-inset-bottom,0px)}
+.bnav{position:fixed;left:0;right:0;bottom:0;z-index:10;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(6,1fr);padding-bottom:env(safe-area-inset-bottom,0px)}
 .bnav button{background:none;border:0;padding:9px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px;color:var(--muted);position:relative}
 .bnav button svg{width:22px;height:22px}
 .bnav button.on{color:var(--blue);font-weight:600}
@@ -134,6 +134,31 @@ h1,h2,h3,p{margin:0}
 .del svg{width:16px;height:16px}
 .del:hover{color:var(--out);background:#FDECEC}
 .tag{font-size:12px;padding:2px 8px;border-radius:99px;font-weight:500}
+.mk{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.mk>div{border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--soft)}
+.mk span{display:block;font-size:12.5px;color:var(--muted)}
+.mk b{display:block;font-size:17px;margin-top:3px}
+.mk em{font-style:normal;font-size:12.5px;font-weight:600}
+.mk em.up{color:var(--in)}.mk em.dn{color:var(--out)}.mk em.nt{color:var(--muted);font-weight:400}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.seg button{background:#fff;border:1px solid #CBD3E2;border-radius:8px;padding:10px 6px;font-size:14px;font-weight:500;color:var(--ink)}
+.seg button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.alloc{display:flex;height:14px;border-radius:7px;overflow:hidden;margin:14px 0 10px}
+.alloc i{display:block;height:100%}
+.al-r{display:grid;grid-template-columns:14px 1fr auto auto;gap:8px;align-items:center;padding:6px 0;font-size:14px}
+.al-r .sw{width:10px;height:10px;border-radius:3px}
+.al-r small{color:var(--muted)}
+.note{border-left:4px solid var(--gold);background:#FFF8E6;border-radius:6px;padding:12px 14px;font-size:13.5px;line-height:1.55;margin-top:12px}
+.note.ok{border-color:var(--in);background:#E9F7F1}
+.ins{display:grid;gap:10px;margin-top:12px}
+.ins>div{border:1px solid var(--line);border-radius:10px;padding:14px}
+.ins h3{margin:0 0 4px;font-size:15px}
+.ins p{margin:4px 0;font-size:13.5px;line-height:1.55;color:var(--muted)}
+.ins .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ins .meta span{font-size:12px;background:#E8F0FD;color:var(--blue);border-radius:99px;padding:2px 9px}
+.ins a{font-size:13px;color:var(--blue)}
+.disc{font-size:12.5px;color:var(--muted);line-height:1.6;margin:16px 2px}
+@media (max-width:700px){.mk{grid-template-columns:1fr}.bnav button{font-size:10.5px;padding:9px 0 8px}}
 .tag.in{background:#E3F5EE}.tag.out{background:#FCE9E8}.tag.tf{background:#E8F0FD}
 .amt.tf{color:var(--blue)}
 .acts{display:flex;justify-content:flex-end;gap:2px}
@@ -216,7 +241,7 @@ input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(27,1
   @keyframes tw{0%,100%{opacity:.25;transform:scale(.7)}50%{opacity:.95;transform:scale(1)}}
 }
 /* emas */
-.gold .gh{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.gh{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .gl{font-size:13px;color:var(--muted)}
 .gp{font-size:26px;font-weight:700;letter-spacing:-.01em;color:#8A6410;margin:2px 0;line-height:1.2}
 .gs{font-size:12.5px;color:var(--muted)}
@@ -244,7 +269,8 @@ var SB_KEY="sb_publishable_RwWHA1A6YrMJPqshWxNZag_ehM4aLAA";
 /* =========================== */
 
 var CATS={in:["Gaji","Usaha","Bonus","Lainnya"],out:["Makan","Transport","Tagihan","Belanja","Kesehatan","Pendidikan","Lainnya"],as:["Kas/Bank","Emas","Perak","Investasi","Kendaraan","Properti","Lainnya"],tf:["Transfer"]};
-var TITLE={sum:"Ringkasan",in:"Pemasukan",out:"Pengeluaran",tf:"Transfer",as:"Aset"};
+var TITLE={sum:"Ringkasan",in:"Pemasukan",out:"Pengeluaran",tf:"Transfer",as:"Aset",inv:"Investasi Syariah"};
+var SHORT={sum:"Ringkasan",in:"Masuk",out:"Keluar",tf:"Transfer",as:"Aset",inv:"Investasi"};
 var FORMT={in:"Catat pemasukan",out:"Catat pengeluaran",as:"Catat aset",tf:"Transfer antar rekening"};
 var BTN={in:"Simpan pemasukan",out:"Simpan pengeluaran",as:"Simpan aset",tf:"Simpan transfer"};
 var LISTT={in:"Mutasi pemasukan",out:"Mutasi pengeluaran",as:"Daftar aset",tf:"Riwayat transfer"};
@@ -257,6 +283,7 @@ var ICON={
   out:ICO('<path d="M7 17 17 7"/><path d="M8 7h9v9"/>'),
   as:ICO('<rect x="3.5" y="6.5" width="17" height="12" rx="2.5"/><path d="M3.5 10.5h17"/><circle cx="16.5" cy="14.5" r="1" fill="currentColor"/>'),
   tf:ICO('<path d="M4 8h14"/><path d="M14 4l4 4-4 4"/><path d="M20 16H6"/><path d="M10 12l-4 4 4 4"/>'),
+  inv:ICO('<path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 15l4-4 3 3 5-6"/><path d="M16 8h4v4"/>'),
   edit:ICO('<path d="M4 20h4L19 9a2.1 2.1 0 0 0-4-4L4 16z"/><path d="M14 6l4 4"/>'),
   x:ICO('<path d="M6 6l12 12M18 6 6 18"/>'),
   logout:ICO('<path d="M10 5H6a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h4"/><path d="M15 8l4 4-4 4M19 12H9"/>'),
@@ -316,11 +343,13 @@ function animateTo(el,to){
 
 var S={items:[]},tab="sum",month=new Date().toISOString().slice(0,7),sb=null,user=null,lastStatus="",firstSummary=true;
 /* harga emas */
-var SP=null,PB={},gMsg="",gOpen="",APPREADY=false,editId="",accSel="";
+var SP=null,PB={},gMsg="",gOpen="",APPREADY=false,editId="",accSel="",HIST=[],RISK="moderat";
 function lsRead(k){try{return localStorage.getItem(k)}catch(e){return null}}
 function lsWrite(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 try{SP=JSON.parse(lsRead("metalCache")||"null")}catch(e){SP=null}
 try{PB=JSON.parse(lsRead("priceBook")||"{}")||{}}catch(e){PB={}}
+try{HIST=JSON.parse(lsRead("metalHist")||"[]")||[]}catch(e){HIST=[]}
+RISK=lsRead("riskProf")||"moderat";
 var $=function(s){return document.querySelector(s)};
 var num=function(n){return Math.round(n).toLocaleString("id-ID")};
 var rp=function(n){return "Rp "+num(n)};
@@ -445,6 +474,7 @@ async function fetchGold(force){
     if(!(a.price>0&&sv.price>0&&fx>0))throw new Error("data");
     SP={au:a.price,ag:sv.price,fx:fx,updated:new Date().toISOString()};
     lsWrite("metalCache",JSON.stringify(SP));
+    pushHist();
   }catch(e){
     gMsg=SP?"Gagal memperbarui harga dunia, memakai data terakhir.":"Harga dunia belum bisa dimuat. Isi harga hari ini per merek secara manual.";
   }
@@ -510,6 +540,80 @@ function toggleGold(fromBrand){
   var br=$("#f-br");
   if(!fromBrand||!br.options.length)br.innerHTML=BRK.filter(function(k){return BR[k].m===m}).map(function(k){return '<option value="'+k+'">'+BR[k].n+'</option>'}).join("");
   var kw=$("#kt-w");if(kw)kw.style.display=br.value==="au-lain"?"block":"none";
+}
+
+/* ===== investasi syariah ===== */
+function pushHist(){
+  if(!SP)return;
+  var now=Date.now(),last=HIST[HIST.length-1];
+  if(last&&now-last.t<6*3600*1000)return;
+  HIST.push({t:now,au:spotGram("au"),ag:spotGram("ag"),fx:SP.fx});
+  HIST=HIST.filter(function(h){return now-h.t<10*86400*1000}).slice(-40);
+  lsWrite("metalHist",JSON.stringify(HIST));
+}
+function chg(key,cur){
+  if(!(cur>0))return null;
+  var now=Date.now(),best=null;
+  HIST.forEach(function(h){
+    var age=now-h.t;
+    if(age>=18*3600*1000&&age<=60*3600*1000&&h[key]>0&&(!best||Math.abs(age-24*3600*1000)<Math.abs(now-best.t-24*3600*1000)))best=h;
+  });
+  return best?(cur/best[key]-1)*100:null;
+}
+function chgTag(p){
+  if(p===null)return '<em class="nt">pembanding 24 jam belum ada</em>';
+  var up=p>=0;return '<em class="'+(up?"up":"dn")+'">'+(up?"▲ +":"▼ −")+Math.abs(p).toFixed(2).replace(".",",")+'% vs kemarin</em>';
+}
+function monthlyOut(){
+  var ms=lastMonths(month,3).map(function(m){return sum("out",m)}).filter(function(v){return v>0});
+  return ms.length?ms.reduce(function(a,b){return a+b},0)/ms.length:0;
+}
+function liquidCash(){
+  return accts().filter(function(a){return a.cat==="Kas/Bank"}).reduce(function(t,a){return t+valueOf(a)},0);
+}
+var PROF={
+  konservatif:{n:"Konservatif",d:"Mengutamakan keamanan modal, siap dengan imbal hasil yang lebih kecil.",
+    a:[["Emas",30],["Sukuk ritel (SBSN)",40],["Reksa dana pasar uang syariah",25],["Saham syariah",5]]},
+  moderat:{n:"Moderat",d:"Seimbang antara pertumbuhan dan keamanan, nyaman dengan naik turun harga sedang.",
+    a:[["Emas",25],["Sukuk ritel (SBSN)",25],["Reksa dana syariah campuran/pendapatan tetap",25],["Saham syariah",25]]},
+  agresif:{n:"Agresif",d:"Fokus pertumbuhan jangka panjang, siap menghadapi penurunan nilai yang tajam.",
+    a:[["Emas",15],["Sukuk ritel (SBSN)",15],["Reksa dana saham syariah",30],["Saham syariah",40]]}
+};
+var APAL=["#E3AE2F","#12805C","#1B66D1","#7A4FB0"];
+var INSTR=[
+  {n:"Emas",s:"Aset riil, diperdagangkan tunai, umumnya dinilai sesuai syariah bila jual-beli dilakukan tunai dan bukan spekulasi berutang.",r:"Risiko: harga naik turun, ada selisih harga jual dan buyback",m:"Mulai dari 0,5 gram",l:["https://www.logammulia.com","Cek harga di Logam Mulia"]},
+  {n:"Sukuk ritel (SBSN)",s:"Surat berharga syariah negara yang diterbitkan pemerintah, dengan imbal hasil berkala. Penawaran dibuka pada periode tertentu.",r:"Risiko: rendah dari sisi gagal bayar, harga bisa turun bila dijual sebelum jatuh tempo",m:"Cek ketentuan tiap seri",l:["https://www.djppr.kemenkeu.go.id","Jadwal dan imbal hasil terbaru (DJPPR)"]},
+  {n:"Reksa dana syariah",s:"Dikelola manajer investasi dan diawasi DSN-MUI serta OJK. Pilih jenis pasar uang, pendapatan tetap, campuran, atau saham sesuai profil risiko.",r:"Risiko: bergantung jenisnya, NAV berubah setiap hari",m:"Biasanya mulai Rp 10.000 sampai Rp 100.000",l:["https://www.ojk.go.id","Cek izin produk dan pengelola (OJK)"]},
+  {n:"Saham syariah",s:"Saham yang masuk Daftar Efek Syariah (ISSI) dan diperdagangkan lewat sekuritas. Daftar diperbarui berkala, jadi periksa status terbaru sebelum membeli.",r:"Risiko: tinggi, harga berubah selama jam bursa",m:"Minimal 1 lot (100 lembar)",l:["https://www.idx.co.id","Harga dan daftar saham syariah (BEI)"]},
+  {n:"Tabungan atau deposito syariah",s:"Produk bank syariah dengan akad bagi hasil. Simpanan dijamin LPS sesuai ketentuan.",r:"Risiko: rendah, imbal hasil mengikuti nisbah bagi hasil bank",m:"Bergantung bank",l:["https://www.lps.go.id","Batas penjaminan (LPS)"]}
+];
+function invView(){
+  var sa=spotGram("au"),ss=spotGram("ag"),fx=SP&&SP.fx>0?SP.fx:0,P=PROF[RISK]||PROF.moderat;
+  var h='<div class="card"><div class="pad"><div class="gh"><div><h2 style="font-size:16px;font-weight:600">Pasar hari ini (langsung)</h2><div class="gs">'+(sa>0?'Diperbarui '+gTime()+', otomatis tiap beberapa jam':'Data pasar belum bisa dimuat. Coba tekan Perbarui.')+'</div>'+(gMsg?'<div class="gs" style="color:var(--out);margin-top:4px">'+esc(gMsg)+'</div>':'')+'</div><button class="btn sec sm" data-gref="1">Perbarui</button></div>'+
+    '<div class="mk"><div><span>Emas dunia per gram</span><b>'+(sa>0?rp(sa):"-")+'</b>'+chgTag(chg("au",sa))+'</div>'+
+    '<div><span>Perak dunia per gram</span><b>'+(ss>0?rp(ss):"-")+'</b>'+chgTag(chg("ag",ss))+'</div>'+
+    '<div><span>Kurs USD ke Rupiah</span><b>'+(fx>0?rp(fx):"-")+'</b>'+chgTag(chg("fx",fx))+'</div></div>'+
+    '<p class="hint">Harga dunia dikonversi ke rupiah. Harga beli di toko emas lokal berbeda karena ada selisih jual-beli dan biaya. Harga saham, reksa dana, dan sukuk tidak tersedia gratis secara langsung, jadi gunakan tautan resmi di bagian instrumen.</p></div></div>';
+
+  /* data pribadi */
+  var out=monthlyOut(),cash=liquidCash(),need=out*6,inc=sum("in",month),sur=inc-sum("out",month),tot=sum("as"),own=goldOwned();
+  var note;
+  if(!(out>0))note='<div class="note">Catat pengeluaran beberapa bulan agar dana darurat Anda bisa dihitung. Aturan umum: simpan 6 kali pengeluaran bulanan dalam bentuk mudah dicairkan.</div>';
+  else if(cash<need)note='<div class="note"><b>Prioritas pertama: dana darurat.</b> Pengeluaran rata-rata Anda sekitar '+rp(out)+' per bulan, jadi target dana darurat 6 bulan sekitar '+rp(need)+'. Saldo Kas/Bank Anda saat ini '+rp(cash)+' (kurang '+rp(need-cash)+'). Biasanya dana ini disimpan di tabungan syariah atau reksa dana pasar uang syariah sebelum masuk ke instrumen yang berfluktuasi.</div>';
+  else note='<div class="note ok"><b>Dana darurat Anda sudah cukup.</b> Saldo Kas/Bank '+rp(cash)+' melebihi target 6 bulan pengeluaran ('+rp(need)+'). Kelebihannya bisa dialokasikan sesuai profil di bawah.</div>';
+  var surLine=sur>0?'Surplus bulan ini '+rp(sur):'Belum ada surplus bulan ini ('+(sur<0?"−":"")+rp(Math.abs(sur))+')';
+  var ownPct=tot>0?Math.round(own.v/tot*100):0;
+  h+='<div class="card"><div class="pad"><h2 style="font-size:16px;font-weight:600">Profil risiko dan alokasi</h2><div class="gs">'+esc(P.d)+'</div><div class="seg">'+
+    Object.keys(PROF).map(function(k){return '<button data-risk="'+k+'" class="'+(k===RISK?"on":"")+'">'+PROF[k].n+'</button>'}).join("")+'</div>'+note;
+  h+='<div class="alloc" role="img" aria-label="Contoh pembagian alokasi">'+P.a.map(function(x,i){return '<i style="width:'+x[1]+'%;background:'+APAL[i]+'"></i>'}).join("")+'</div>';
+  var base=sur>0?sur:0;
+  h+=P.a.map(function(x,i){return '<div class="al-r"><span class="sw" style="background:'+APAL[i]+'"></span><span>'+esc(x[0])+'</span><b>'+x[1]+'%</b><small>'+(base>0?rp(base*x[1]/100):"")+'</small></div>'}).join("");
+  h+='<p class="hint">'+surLine+(base>0?'. Kolom kanan memperlihatkan pembagian surplus tersebut jika mengikuti contoh alokasi.':'.')+(tot>0?' Emas dan perak saat ini '+ownPct+'% dari total aset Anda.':'')+'</p></div></div>';
+
+  h+='<div class="card"><div class="pad"><h2 style="font-size:16px;font-weight:600">Mengenal instrumen syariah</h2><div class="ins">'+INSTR.map(function(x){
+    return '<div><h3>'+x.n+'</h3><p>'+x.s+'</p><div class="meta"><span>'+x.r+'</span><span>'+x.m+'</span></div><p style="margin-top:8px"><a href="'+x.l[0]+'" target="_blank" rel="noopener">'+x.l[1]+' ↗</a></p></div>'}).join("")+'</div></div></div>';
+  h+='<p class="disc">Halaman ini bersifat edukasi dan contoh alokasi umum berdasarkan data Anda, bukan nasihat investasi. Aplikasi ini bukan penasihat investasi berizin OJK. Status kesesuaian syariah dapat berubah, jadi pastikan produk dan penerbitnya tercatat di OJK dan memiliki fatwa DSN-MUI sebelum membeli. Investasi mengandung risiko, termasuk kerugian nilai.</p>';
+  return h;
 }
 
 function monthBox(){return '<label class="mo"><span>Periode</span><input type="month" id="mo" value="'+month+'"></label>'}
@@ -667,14 +771,15 @@ function render(){
   if(sb&&!user){renderLogin();return}
   var keys=Object.keys(TITLE);
   var nav=keys.map(function(k){return '<button data-tab="'+k+'" class="'+(k===tab?"on":"")+'"'+(k===tab?' aria-current="page"':'')+'>'+ICON[k]+TITLE[k]+'</button>'}).join("");
+  var navB=keys.map(function(k){return '<button data-tab="'+k+'" class="'+(k===tab?"on":"")+'"'+(k===tab?' aria-current="page"':'')+'>'+ICON[k]+SHORT[k]+'</button>'}).join("");
   var email=user?esc(user.email):"Mode lokal";
-  var showMonth=tab!=="as";
+  var showMonth=tab!=="as"&&tab!=="inv";
   $("#root").innerHTML=
   '<div class="shell"><aside class="side">'+LOGOT+'<nav aria-label="Menu utama">'+nav+'</nav><div class="foot"><b>'+email+'</b>'+(sb?'<button class="ghost-w" data-out="1">'+ICON.logout+'Keluar</button>':"")+'</div></aside>'+
   '<div><div class="mtop">'+LOGOT+(sb?'<button class="ghost-w" data-out="1" aria-label="Keluar">'+ICON.logout+'Keluar</button>':"")+'</div>'+
   '<main class="main"><div class="pg-h"><div><div class="greet">'+greeting()+'</div><h1>'+TITLE[tab]+'</h1></div>'+(showMonth?monthBox():"")+'</div>'+
-  (tab==="sum"?summaryView():listView())+'<div id="st"></div></main></div></div>'+
-  '<nav class="bnav" aria-label="Menu utama">'+nav+'</nav>';
+  (tab==="sum"?summaryView():tab==="inv"?invView():listView())+'<div id="st"></div></main></div></div>'+
+  '<nav class="bnav" aria-label="Menu utama">'+navB+'</nav>';
   status(lastStatus);
   if(tab==="sum"&&firstSummary){firstSummary=false;animateTo($("#tot"),sum("as"))}
 }
@@ -693,6 +798,7 @@ document.addEventListener("click",function(e){
   var b=e.target.closest("button");if(!b)return;
   if(b.dataset.login)auth(b.dataset.login);
   else if(b.dataset.gref)fetchGold(true);
+  else if(b.dataset.risk){RISK=b.dataset.risk;lsWrite("riskProf",RISK);render()}
   else if(b.dataset.gsave)savePrice();
   else if(b.dataset.gdel)clearPrice(b.dataset.gdel);
   else if(b.dataset.gedit)editBrand(b.dataset.gedit);

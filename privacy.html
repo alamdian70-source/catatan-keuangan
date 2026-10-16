@@ -23,7 +23,7 @@ a{color:#1B66D1}
 <header><a href="index.html">Catatan Keuangan by Alam</a></header>
 <main>
 <h1>Kebijakan Privasi</h1>
-<p class="d">Terakhir diperbarui: 15 Oktober 2026</p>
+<p class="d">Terakhir diperbarui: 16 Oktober 2026</p>
 
 <p>Kebijakan ini menjelaskan data apa yang dikumpulkan oleh aplikasi Catatan Keuangan by Alam, untuk apa data itu dipakai, dan bagaimana Anda bisa menghapusnya.</p>
 
@@ -46,6 +46,9 @@ a{color:#1B66D1}
 <li>Vercel: hosting website dan aplikasi.</li>
 <li>Google Fonts: memuat huruf yang dipakai pada tampilan.</li>
 <li>gold-api.com dan open.er-api.com: sumber harga emas dan perak dunia serta kurs rupiah untuk menghitung nilai logam mulia. Saat aplikasi dibuka, browser Anda meminta harga ke layanan ini, sehingga alamat IP perangkat Anda terlihat oleh mereka seperti pada kunjungan website biasa. Data keuangan, berat logam, harga merek, dan email Anda tidak dikirim ke layanan tersebut.</li>
+<li>api.frankfurter.dev (atau api.frankfurter.app) dan api.coingecko.com: sumber riwayat kurs dan harga kripto untuk grafik pada menu Investasi. Browser Anda meminta data ini langsung, sehingga alamat IP perangkat Anda terlihat oleh layanan tersebut. Data keuangan Anda tidak dikirim ke mereka.</li>
+<li>Yahoo Finance (melalui fungsi server di proyek Vercel Anda): sumber riwayat harga saham dan IHSG. Yang dikirim hanya kode saham yang Anda ketik, bukan data keuangan Anda.</li>
+<li>Pantauan reksa dana syariah dan SBN: nilai yang Anda ketik sendiri disimpan bersama catatan keuangan Anda di Supabase, dengan perlindungan yang sama.</li>
 </ul>
 
 <h2>Menghapus data dan akun</h2>

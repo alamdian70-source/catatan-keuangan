@@ -157,7 +157,35 @@ h1,h2,h3,p{margin:0}
 .ins .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .ins .meta span{font-size:12px;background:#E8F0FD;color:var(--blue);border-radius:99px;padding:2px 9px}
 .ins a{font-size:13px;color:var(--blue)}
-.ch svg{width:100%;height:190px;display:block;margin-top:12px}
+.report{display:none}
+.pdfrow{margin:-4px 0 16px;display:flex;justify-content:flex-end}
+.pdfrow .btn{display:inline-flex;align-items:center;gap:8px}
+.pdfrow .btn svg{width:17px;height:17px}
+@media print{
+  @page{size:A4;margin:14mm}
+  html,body{background:#fff!important}
+  #root,.bnav,#st{display:none!important}
+  .report{display:block!important;color:#111;font-family:var(--font);font-size:11pt;line-height:1.45;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .report h1{font-size:19pt;margin:0 0 2pt;color:#0A2358}
+  .report h2{font-size:12.5pt;margin:16pt 0 6pt;color:#0A2358;border-bottom:1.5pt solid #E3AE2F;padding-bottom:3pt;break-after:avoid}
+  .report .rh{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2.5pt solid #0A2358;padding-bottom:8pt;margin-bottom:10pt}
+  .report .rh small{color:#555;font-size:9.5pt;text-align:right;line-height:1.5}
+  .report .sub{color:#444;font-size:11pt}
+  .report .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8pt;margin:10pt 0}
+  .report .kpi div{border:1pt solid #CBD3E2;border-radius:5pt;padding:7pt 9pt}
+  .report .kpi span{display:block;font-size:9pt;color:#555}
+  .report .kpi b{display:block;font-size:12.5pt;margin-top:2pt}
+  .report .in{color:#12805C}.report .out{color:#C8312F}
+  .report table{width:100%;border-collapse:collapse;font-size:10pt}
+  .report th{background:#EEF2F9;text-align:left;font-weight:600;padding:5pt 6pt;border-bottom:1pt solid #CBD3E2}
+  .report td{padding:4.5pt 6pt;border-bottom:.5pt solid #E1E6EF;vertical-align:top}
+  .report .r{text-align:right;white-space:nowrap}
+  .report tr{break-inside:avoid}
+  .report tfoot td{font-weight:700;border-top:1.2pt solid #0A2358;border-bottom:0}
+  .report .two{display:grid;grid-template-columns:1fr 1fr;gap:14pt;align-items:start}
+  .report .muted{color:#666;font-size:9pt}
+  .report .foot{margin-top:18pt;padding-top:6pt;border-top:.5pt solid #CBD3E2;color:#666;font-size:8.5pt}
+};height:190px;display:block;margin-top:12px}
 .ch .st{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted);margin-top:8px}
 .ch .st b{color:var(--ink);font-weight:600}
 .ch .big{font-size:22px;font-weight:700;margin-top:12px}
@@ -278,6 +306,7 @@ input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(27,1
 </head>
 <body>
 <div id="root"></div>
+<div id="report" class="report" aria-hidden="true"></div>
 <script>
 /* ====== DATA SUPABASE ====== */
 var SB_URL="https://howsfdyflolnavdqasuz.supabase.co";
@@ -300,6 +329,7 @@ var ICON={
   as:ICO('<rect x="3.5" y="6.5" width="17" height="12" rx="2.5"/><path d="M3.5 10.5h17"/><circle cx="16.5" cy="14.5" r="1" fill="currentColor"/>'),
   tf:ICO('<path d="M4 8h14"/><path d="M14 4l4 4-4 4"/><path d="M20 16H6"/><path d="M10 12l-4 4 4 4"/>'),
   inv:ICO('<path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 15l4-4 3 3 5-6"/><path d="M16 8h4v4"/>'),
+  pdf:ICO('<path d="M7 3.5h7l4 4V20a.5.5 0 0 1-.5.5h-10.5a.5.5 0 0 1-.5-.5V4a.5.5 0 0 1 .5-.5z"/><path d="M14 3.5V8h4"/><path d="M12 11.5v5M9.8 14.6l2.2 2.2 2.2-2.2"/>'),
   edit:ICO('<path d="M4 20h4L19 9a2.1 2.1 0 0 0-4-4L4 16z"/><path d="M14 6l4 4"/>'),
   x:ICO('<path d="M6 6l12 12M18 6 6 18"/>'),
   logout:ICO('<path d="M10 5H6a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h4"/><path d="M15 8l4 4-4 4M19 12H9"/>'),
@@ -742,6 +772,40 @@ function invView(){
   return h;
 }
 
+/* ===== laporan bulanan (PDF lewat dialog cetak) ===== */
+function reportHtml(){
+  var m=month,i=sum("in",m),o=sum("out",m),bal=i-o,tot=sum("as");
+  var tx=S.items.filter(function(x){return (x.type==="in"||x.type==="out"||x.type==="tf")&&x.date.slice(0,7)===m}).sort(function(a,b){return a.date.localeCompare(b.date)||a.id.localeCompare(b.id)});
+  var tfSum=tx.filter(function(x){return x.type==="tf"}).reduce(function(a,x){return a+x.amount},0);
+  function catTable(t,total,cls){
+    var l=byCat(t,m);
+    if(!l.length)return '<p class="muted">Tidak ada data pada bulan ini.</p>';
+    return '<table><thead><tr><th>Kategori</th><th class="r">Jumlah</th><th class="r">%</th></tr></thead><tbody>'+l.map(function(x){return '<tr><td>'+esc(x[0])+'</td><td class="r">'+rp(x[1])+'</td><td class="r">'+(total>0?(x[1]/total*100).toFixed(1).replace(".",","):"0")+'%</td></tr>'}).join("")+'</tbody><tfoot><tr><td>Total</td><td class="r '+cls+'">'+rp(total)+'</td><td></td></tr></tfoot></table>';
+  }
+  var h='<div class="rh"><div><h1>Laporan Keuangan Bulanan</h1><div class="sub">Periode '+monthLabel(m)+'</div></div><small><b>Catatan Keuangan by Alam</b><br>'+(user?esc(user.email)+'<br>':'')+'Dicetak '+new Date().toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"})+'</small></div>';
+  h+='<div class="kpi"><div><span>Pemasukan</span><b class="in">'+rp(i)+'</b></div><div><span>Pengeluaran</span><b class="out">'+rp(o)+'</b></div><div><span>Saldo bulan ini</span><b class="'+(bal>=0?"in":"out")+'">'+(bal<0?"−":"")+rp(Math.abs(bal))+'</b></div><div><span>Total aset (saat dicetak)</span><b>'+rp(tot)+'</b></div></div>';
+  if(tfSum>0)h+='<p class="muted">Transfer antar rekening bulan ini sebesar '+rp(tfSum)+' tidak dihitung sebagai pemasukan maupun pengeluaran.</p>';
+  h+='<div class="two"><div><h2>Pengeluaran per kategori</h2>'+catTable("out",o,"out")+'</div><div><h2>Pemasukan per kategori</h2>'+catTable("in",i,"in")+'</div></div>';
+  h+='<h2>Daftar transaksi</h2>';
+  if(!tx.length)h+='<p class="muted">Tidak ada transaksi pada bulan ini.</p>';
+  else h+='<table><thead><tr><th>Tanggal</th><th>Keterangan</th><th>Kategori / rekening</th><th>Jenis</th><th class="r">Jumlah</th></tr></thead><tbody>'+tx.map(function(x){
+    var d=descOf(x),isT=x.type==="tf",t=isT?esc(d.t):d.t,sb=isT?esc(d.s):d.s,lab=x.type==="in"?"Pemasukan":x.type==="out"?"Pengeluaran":"Transfer";
+    return '<tr><td>'+dShort(x.date)+'</td><td>'+(isT?"Transfer: ":"")+t+'</td><td>'+(isT?sb:sb)+'</td><td>'+lab+'</td><td class="r '+(x.type==="tf"?"":x.type)+'">'+(x.type==="in"?"+":x.type==="out"?"−":"")+rp(x.amount)+'</td></tr>'}).join("")+'</tbody></table>';
+  var as=S.items.filter(function(x){return x.type==="as"});
+  h+='<h2>Posisi aset saat dicetak</h2>';
+  if(!as.length)h+='<p class="muted">Belum ada aset yang dicatat.</p>';
+  else h+='<table><thead><tr><th>Nama aset</th><th>Kategori</th><th class="r">Nilai</th></tr></thead><tbody>'+as.map(function(x){return '<tr><td>'+esc(x.note||x.cat)+(x.grams>0?' <span class="muted">('+fmtGram(x.grams)+' g)</span>':'')+'</td><td>'+esc(x.cat)+'</td><td class="r">'+rp(valueOf(x))+'</td></tr>'}).join("")+'</tbody><tfoot><tr><td colspan="2">Total aset</td><td class="r">'+rp(tot)+'</td></tr></tfoot></table>';
+  h+='<div class="foot">Dibuat otomatis oleh aplikasi Catatan Keuangan. Nilai emas dan perak merupakan estimasi berdasarkan harga yang tersimpan saat laporan dicetak. Saldo rekening mencerminkan kondisi saat ini, bukan akhir bulan.</div>';
+  return h;
+}
+function printReport(){
+  var r=$("#report");if(!r)return;
+  r.innerHTML=reportHtml();
+  var old=document.title;document.title="Laporan-Keuangan-"+month;
+  window.addEventListener("afterprint",function(){document.title=old;r.innerHTML=""},{once:true});
+  window.print();
+}
+
 function monthBox(){return '<label class="mo"><span>Periode</span><input type="month" id="mo" value="'+month+'"></label>'}
 
 function donutCard(title,list,type,emptyMsg){
@@ -775,6 +839,7 @@ function summaryView(){
   return (S.items.length?'':welcomeBanner())+'<section class="acct">'+coinStack()+'<div class="al">Total aset</div><div class="ab"><small>Rp</small><span id="tot">'+num(sum("as"))+'</span></div><div class="au">Posisi per '+new Date().toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"})+'</div>'+
     '<div class="stats"><div class="i"><span>Pemasukan</span><b>'+rp(i)+'</b></div><div class="o"><span>Pengeluaran</span><b>'+rp(o)+'</b></div><div><span>Saldo bulan ini</span><b>'+(bal<0?"−":"")+rp(Math.abs(bal))+'</b></div></div></section>'+
     '<div class="quick"><button data-tab="in"><span class="ic">'+ICON.in+'</span>Catat pemasukan</button><button data-tab="out"><span class="ic">'+ICON.out+'</span>Catat pengeluaran</button><button data-tab="tf"><span class="ic">'+ICON.tf+'</span>Transfer</button><button data-tab="as"><span class="ic">'+ICON.as+'</span>Catat aset</button></div>'+
+    '<div class="pdfrow"><button class="btn sec sm" data-pdf="1">'+ICON.pdf+'Unduh laporan '+monthLabel(month)+' (PDF)</button></div>'+
     goldLine()+'<div class="grid2">'+cashflowCard()+donutCard("Pengeluaran per kategori",byCat("out",month),"out","Belum ada pengeluaran pada periode ini.")+'</div>'+
     recentCard()+
     '<div style="height:16px"></div>'+donutCard("Aset per kategori",byCat("as"),"as","Belum ada aset yang dicatat.");
@@ -924,6 +989,7 @@ document.addEventListener("click",function(e){
   var b=e.target.closest("button");if(!b)return;
   if(b.dataset.login)auth(b.dataset.login);
   else if(b.dataset.gref)fetchGold(true);
+  else if(b.dataset.pdf)printReport();
   else if(b.dataset.chart){CHSEL=b.dataset.chart;render();loadChart(false)}
   else if(b.dataset.chr){CHR=parseInt(b.dataset.chr,10);render();loadChart(false)}
   else if(b.dataset.chrefresh)loadChart(true);
